@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Lava Lamp</title>
+    <meta
+      name="description"
+      content="An ambient lava lamp made from cached fragments of an open web-scale dataset."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./app.js"></script>
+  </head>
+  <body data-dataset="fineweb" class="labels-visible">
+    <div class="page-shell">
+      <div class="ambient ambient-a"></div>
+      <div class="ambient ambient-b"></div>
+      <div class="ambient ambient-c"></div>
+      <div class="grain" aria-hidden="true"></div>
+
+      <header class="hud">
+        <section class="panel title-panel">
+          <p class="eyebrow">Cached open-data fragments, staged as ambient motion</p>
+          <h1>Data Lava Lamp</h1>
+          <p class="lede">
+            A polished drift of open web-scale text: switch between FineWeb and
+            Dolma, let the cards rise like lanterns, and reveal labels whenever
+            you want the metadata to come back into focus.
+          </p>
+          <div class="hero-pills">
+            <span class="pill">FineWeb Edu</span>
+            <span class="pill">Dolma 3 Mix</span>
+            <span class="pill">Optional labels</span>
+          </div>
+        </section>
+
+        <div class="hud-grid">
+          <section class="panel panel-controls" aria-label="installation controls">
+            <p class="panel-label">Dataset</p>
+            <div class="dataset-switch" role="radiogroup" aria-label="dataset picker">
+              <button
+                class="dataset-toggle is-active"
+                data-dataset="fineweb"
+                type="button"
+              >
+                FineWeb Edu
+              </button>
+              <button class="dataset-toggle" data-dataset="dolma" type="button">
+                Dolma 3 Mix
+              </button>
+            </div>
+
+            <p class="panel-label panel-label-spaced">Display</p>
+            <label class="toggle-row" for="labels-toggle">
+              <span>Show labels</span>
+              <span class="switch">
+                <input id="labels-toggle" type="checkbox" checked />
+                <span class="switch-track"></span>
+              </span>
+            </label>
+
+            <div class="control-row">
+              <label for="speed">Flow speed</label>
+              <input
+                id="speed"
+                type="range"
+                min="0.7"
+                max="1.8"
+                step="0.1"
+                value="1"
+              />
+            </div>
+            <div class="control-row">
+              <label for="density">Density</label>
+              <input id="density" type="range" min="1" max="5" step="1" value="3" />
+            </div>
+            <div class="button-row">
+              <button id="ui-toggle-button" type="button">Hide Interface</button>
+              <button id="toggle" type="button">Pause</button>
+              <button id="shuffle" type="button">Shuffle Palette</button>
+              <button id="fullscreen-toggle" type="button">Go Fullscreen</button>
+            </div>
+          </section>
+
+          <section class="panel panel-meta">
+            <p class="panel-label">Current stream</p>
+            <h2 id="dataset-name">Loading...</h2>
+            <p id="dataset-summary" class="panel-copy">
+              Pulling cached metadata.
+            </p>
+            <div class="meta-pills">
+              <span id="dataset-license" class="pill">...</span>
+              <span id="dataset-size" class="pill">...</span>
+              <span id="dataset-source" class="pill">...</span>
+            </div>
+            <p id="dataset-label-note" class="label-note">
+              Loading label notes.
+            </p>
+          </section>
+        </div>
+      </header>
+
+      <div id="stage-dock" class="stage-dock" aria-label="presentation controls">
+        <button id="dock-ui-toggle" class="dock-button" type="button">
+          Show Interface
+        </button>
+        <button id="dock-fullscreen-toggle" class="dock-button" type="button" hidden>
+          Exit Fullscreen
+        </button>
+      </div>
+
+      <main class="lamp-stage" aria-live="polite">
+        <div class="stage-halo" aria-hidden="true"></div>
+        <div class="stage-rings" aria-hidden="true">
+          <span class="ring ring-a"></span>
+          <span class="ring ring-b"></span>
+          <span class="ring ring-c"></span>
+        </div>
+        <div id="stream" class="stream"></div>
+        <div class="scanlines" aria-hidden="true"></div>
+      </main>
+
+      <footer class="footer-note">
+        <p id="footer-text">
+          Loading cached sample excerpts from the selected dataset.
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,131 @@
+{
+  "dataset": {
+    "name": "HuggingFaceFW/fineweb-edu",
+    "license": "ODC-BY",
+    "short_tag": "FineWeb",
+    "shortSource": "Hugging Face",
+    "source_url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu",
+    "rationale": "Chosen for the softer side of the installation because it is openly licensed, public, and yields cleaner readable educational web fragments than the current default Dolma 3 preview.",
+    "label_note": "Labels here blend dataset metadata with a few lightweight curator tags so the stream stays readable without pretending the dataset shipped those exact categories.",
+    "curator_note": "FineWeb-Edu is the gentler channel in the room: public, legible, educational, and still recognizably web-native."
+  },
+  "samples": [
+    {
+      "id": "urn:uuid:673b1bf6-2c30-40ae-992b-c387d00a836a",
+      "dump": "CC-MAIN-2013-20",
+      "year": "2013",
+      "domain": "aacap.org",
+      "url": "http://aacap.org/page.ww?name=When+to+Seek+Help+for+Your+Child&section=Facts+for+Families",
+      "token_count": 755,
+      "score": 3.375,
+      "category": "health",
+      "source_type": "family guide",
+      "label_basis": "curated tags",
+      "excerpt": "Parents are usually the first to recognize that their child has a problem with emotions or behavior. The first step is to gently try to talk to the child, then watch for signs like school decline, severe worry, aggression, or self-harm."
+    },
+    {
+      "id": "urn:uuid:e2300ad5-01dd-4e80-92b3-7ec88785cc9d",
+      "dump": "CC-MAIN-2013-20",
+      "year": "2013",
+      "domain": "aas.org",
+      "url": "http://aas.org/archives/BAAS/v30n2/aas192/abs/S040015.html",
+      "token_count": 208,
+      "score": 2.765625,
+      "category": "science",
+      "source_type": "conference abstract",
+      "label_basis": "curated tags",
+      "excerpt": "Gamma Ray Burst explosions can make kiloparsec-size shells and holes in the interstellar medium if enough energy heats local gas above 10^7 K, with disk blowout acting as a major path for energy loss."
+    },
+    {
+      "id": "urn:uuid:e6ba92ad-ed0a-4cac-8e5d-204b78cdd250",
+      "dump": "CC-MAIN-2013-20",
+      "year": "2013",
+      "domain": "abcnews.go.com",
+      "url": "http://abcnews.go.com/Health/BipolarOverview/story?id=4359993",
+      "token_count": 71,
+      "score": 2.609375,
+      "category": "health",
+      "source_type": "news explainer",
+      "label_basis": "curated tags",
+      "excerpt": "Both bipolar disorder and major depression involve depressive episodes, but bipolar disorder also includes periods of elevation or severe irritability known as manic or hypomanic episodes."
+    },
+    {
+      "id": "urn:uuid:3b2c1a91-4f52-464d-ad69-49c1cbadaba8",
+      "dump": "CC-MAIN-2013-20",
+      "year": "2013",
+      "domain": "achieve.org",
+      "url": "http://achieve.org/Idaho",
+      "token_count": 341,
+      "score": 2.6875,
+      "category": "education policy",
+      "source_type": "policy page",
+      "label_basis": "curated tags",
+      "excerpt": "The college- and career-ready agenda is framed through an economic imperative, an equity imperative, and an expectations imperative, while Idaho's progress is measured through accountability, reporting, and readiness indicators."
+    },
+    {
+      "id": "urn:uuid:a69aabbc-f529-4d67-843a-a5c3cb4e8fe0",
+      "dump": "CC-MAIN-2013-20",
+      "year": "2013",
+      "domain": "adriatictraveller.com",
+      "url": "http://adriatictraveller.com/ru/croatia-essential/heritage.html",
+      "token_count": 1292,
+      "score": 2.53125,
+      "category": "travel and heritage",
+      "source_type": "travel guide",
+      "label_basis": "curated tags",
+      "excerpt": "Croatia is described as a place where museums, churches, UNESCO-listed traditions, Nikola Tesla, the necktie, Marco Polo, marble quarries, vineyards, and noon cannon fire all compress into one dense travel narrative."
+    },
+    {
+      "id": "urn:uuid:f7082439-68e9-45b6-a427-4600dceaf5e3",
+      "dump": "CC-MAIN-2013-20",
+      "year": "2013",
+      "domain": "ainads.com",
+      "url": "http://ainads.com/Pregnancy/Chinese%20Pregnancy%20Calendar%20.php",
+      "token_count": 940,
+      "score": 3.125,
+      "category": "folklore and health",
+      "source_type": "advice article",
+      "label_basis": "curated tags",
+      "excerpt": "An article about the Chinese pregnancy calendar blends folklore, lunar-age calculations, gender prediction claims, and improvised medical advice into a single drifting block of web-era instructional text."
+    },
+    {
+      "id": "urn:uuid:9c71b6db-6728-48b5-96b5-05fbc0b5bb4f",
+      "dump": "CC-MAIN-2013-20",
+      "year": "2013",
+      "domain": "amazingpicturesoftheanimals.blogspot.com",
+      "url": "http://amazingpicturesoftheanimals.blogspot.com/2012/05/mellers-chameleon-facts-pictures.html",
+      "token_count": 359,
+      "score": 3.40625,
+      "category": "wildlife",
+      "source_type": "blog post",
+      "label_basis": "curated tags",
+      "excerpt": "Meller's chameleon is a giant one-horned chameleon from East African savannas. It shifts color in response to stress, ambushes prey with a catapulting tongue, and survives poorly when stressed in captivity."
+    },
+    {
+      "id": "urn:uuid:f5c220a7-7276-4cf2-9208-33679d478b1f",
+      "dump": "CC-MAIN-2013-20",
+      "year": "2013",
+      "domain": "ambafrance-us.org",
+      "url": "http://ambafrance-us.org/spip.php?article949&xtor=AL-13",
+      "token_count": 1305,
+      "score": 3.125,
+      "category": "energy policy",
+      "source_type": "embassy article",
+      "label_basis": "curated tags",
+      "excerpt": "French nuclear policy is presented as a strategic response to the oil crisis, tied to energy independence, greenhouse-gas reduction, waste reprocessing, reactor research, and the long institutional reach of the CEA."
+    },
+    {
+      "id": "urn:uuid:ff577d1a-83b8-467c-af1c-4c0aa2ead4fb",
+      "dump": "CC-MAIN-2013-20",
+      "year": "2013",
+      "domain": "americanhistory.si.edu",
+      "url": "http://americanhistory.si.edu/collections/object-groups/mexican-america?edan_start=0&edan_fq=date%3A%221840s%22",
+      "token_count": 1938,
+      "score": 4.0625,
+      "category": "history",
+      "source_type": "museum page",
+      "label_basis": "curated tags",
+      "excerpt": "\"Mexican America\" introduces museum objects as a way to tell a centuries-old story of coexistence, conflict over land and culture, and the reshaping of borders from California to Guatemala."
+    }
+  ]
+}

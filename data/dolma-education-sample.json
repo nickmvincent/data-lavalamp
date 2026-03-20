@@ -1,0 +1,92 @@
+{
+  "dataset": {
+    "name": "allenai/dolma3_mix-150B-1025",
+    "license": "ODC-BY",
+    "short_tag": "Dolma",
+    "shortSource": "Allen AI / Hugging Face",
+    "source_url": "https://huggingface.co/datasets/allenai/dolma3_mix-150B-1025",
+    "rationale": "Chosen as the rougher alternate channel because it is a real public Dolma 3 sample. These cached excerpts come from a downloaded `education_and_jobs` shard so the site can offer a Dolma option without relying on the noisier adult-heavy default preview.",
+    "label_note": "These labels come mostly from Dolma metadata: the main category is `weborganizer_max`, while source-type tags are lightweight curator summaries of the page itself.",
+    "curator_note": "Dolma 3 Mix gives the installation a rawer pretraining-corpus texture. This cache is pulled from a small safe shard rather than the default first-row preview."
+  },
+  "samples": [
+    {
+      "id": "2aeb742e-a5bd-4c0e-a941-216e9efb52b0",
+      "dump": "CC-MAIN-2024-10",
+      "year": "2024",
+      "domain": "aitece.com",
+      "url": "http://www.aitece.com/about/",
+      "count": 199,
+      "unit": "words",
+      "category": "__label__education_and_jobs",
+      "source_type": "organization profile",
+      "label_basis": "weborganizer + curated tags",
+      "excerpt": "Association for International, Teaching, Educational, and Curriculum Exchange. Hong Kong office. Its stated aim is to contribute to the modernization of China and promote international understanding and friendship."
+    },
+    {
+      "id": "cc303dae-7b50-4fc0-bf17-42d035cdeae1",
+      "dump": "CC-MAIN-2018-13",
+      "year": "2018",
+      "domain": "pavillondelemyrne.com",
+      "url": "http://pavillondelemyrne.com/essay-suppliers-scored-by-school-students-the/",
+      "count": 597,
+      "unit": "words",
+      "category": "__label__education_and_jobs",
+      "source_type": "essay-mill page",
+      "label_basis": "weborganizer + curated tags",
+      "excerpt": "An essay-service page repeats its title like a glitch, then pivots into a pitch: students struggle with academic writing, so online writing services promise expert help, editing, formatting, and relief."
+    },
+    {
+      "id": "83f873c7-1220-4944-9dd7-e25e3581aa91",
+      "dump": "CC-MAIN-2016-50",
+      "year": "2016",
+      "domain": "abc7.com",
+      "url": "http://abc7.com/news/1470532/",
+      "count": 408,
+      "unit": "words",
+      "category": "__label__education_and_jobs",
+      "source_type": "news story",
+      "label_basis": "weborganizer + curated tags",
+      "excerpt": "A local news segment looks at schooling for children of carnival workers, describing a traveling academy that lets fair employees bring their kids on the road while keeping a tailored curriculum in motion."
+    },
+    {
+      "id": "952715e3-8431-420e-aefb-3e120263a37c",
+      "dump": "CC-MAIN-2022-05",
+      "year": "2022",
+      "domain": "galway.staff-wanted.net",
+      "url": "http://www.galway.staff-wanted.net/2021/12/supermacs-salthill-trainee-manager-job.html",
+      "count": 193,
+      "unit": "words",
+      "category": "__label__education_and_jobs",
+      "source_type": "job listing",
+      "label_basis": "weborganizer + curated tags",
+      "excerpt": "A trainee-manager listing for Supermacs asks for at least two years of supervisory experience in catering, hospitality, or quick-service food, with emphasis on people management and store operations."
+    },
+    {
+      "id": "c8d6222d-9bfa-4404-b927-5449defed9d5",
+      "dump": "CC-MAIN-2024-18",
+      "year": "2024",
+      "domain": "jpplus.com",
+      "url": "https://www.jpplus.com/resources/i-cant-attend-the-live-webinar-will-it-be-repeated-is-there-any-way-to-watch-it-later",
+      "count": 65,
+      "unit": "words",
+      "category": "__label__education_and_jobs",
+      "source_type": "webinar FAQ",
+      "label_basis": "weborganizer + curated tags",
+      "excerpt": "A webinar FAQ explains that most sessions are free to the public but require registration, and that recordings and presentation decks may be posted later on the workshops page."
+    },
+    {
+      "id": "be6135f0-581d-4817-b522-406e9f946b04",
+      "dump": "CC-MAIN-2018-47",
+      "year": "2018",
+      "domain": "nursing.utah.edu",
+      "url": "https://nursing.utah.edu/programs/bs/early-assurance/",
+      "count": 294,
+      "unit": "words",
+      "category": "__label__education_and_jobs",
+      "source_type": "university admissions",
+      "label_basis": "weborganizer + curated tags",
+      "excerpt": "The Nursing Early Assurance Program offers a direct-entry path for eligible high-school seniors and first-year college students interested in earning a BSN, with fewer than 30 credit hours completed."
+    }
+  ]
+}
