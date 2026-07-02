@@ -1,0 +1,16 @@
+{
+  "name": "data-lavalamp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-pages.mjs",
+    "pages:dev": "npm run build && wrangler pages dev dist",
+    "pages:deploy": "npm run build && wrangler pages deploy dist --project-name data-lavalamp --branch main",
+    "pages:deploy:preview": "npm run build && wrangler pages deploy dist --project-name data-lavalamp --branch preview",
+    "pages:projects": "wrangler pages project list"
+  },
+  "devDependencies": {
+    "wrangler": "^4.70.0"
+  }
+}

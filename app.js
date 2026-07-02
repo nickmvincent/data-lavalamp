@@ -1,30 +1,65 @@
 const DATASET_FILES = {
   fineweb: "./data/fineweb-edu-sample.json",
   dolma: "./data/dolma-education-sample.json",
+  oasst: "./data/oasst1-post-training-sample.json",
+};
+
+const STREAMS = {
+  pretraining: {
+    label: "Pre-training",
+    shortLabel: "Pre",
+    texture: "web-scale text",
+    trace: "domains + tokens",
+    defaultDataset: "fineweb",
+    datasetKeys: ["fineweb", "dolma"],
+    note:
+      "Pre-training data is broad, messy, and mixed: the model learns next-token patterns from many kinds of text before it is tuned to act like an assistant.",
+  },
+  posttraining: {
+    label: "Post-training",
+    shortLabel: "Post",
+    texture: "human feedback",
+    trace: "roles + ratings",
+    defaultDataset: "oasst",
+    datasetKeys: ["oasst"],
+    note:
+      "Post-training data is narrower and more intentional: prompts, replies, ratings, and preferences used to shape how a base model behaves.",
+  },
 };
 
 const tintPalettes = {
   fineweb: [
-    ["#91f8d3", "#ffd38b", "#6db4ff", "#f7a6ca"],
-    ["#f4d35e", "#ee964b", "#0d3b66", "#9cd08f"],
-    ["#c3f0ca", "#7ab6ff", "#f7b7a3", "#fef3c7"],
+    ["#18f5c6", "#ffde59", "#46a7ff", "#ff4fb8"],
+    ["#d6ff4f", "#ff7a3d", "#28e7ff", "#f7f4ea"],
+    ["#8cffd2", "#72a7ff", "#ff8fcb", "#f3ff6d"],
   ],
   dolma: [
-    ["#b8c1ff", "#ffb07c", "#f3d47f", "#7fd6ff"],
-    ["#9da6ff", "#ff8f5b", "#dde4ff", "#8df0d1"],
+    ["#9aa7ff", "#ff8a3d", "#ffe66d", "#22d4ff"],
+    ["#b36bff", "#ff5b6e", "#d8ff4f", "#8df0d1"],
     ["#d8b4ff", "#ffcc80", "#8ab4ff", "#ffd6e7"],
+  ],
+  oasst: [
+    ["#ff4fd8", "#30f2ff", "#f6ff5c", "#9cff6a"],
+    ["#ff6b2c", "#47f0a8", "#7b61ff", "#f9f871"],
+    ["#f72585", "#4cc9f0", "#b9ff66", "#ffffff"],
   ],
 };
 
 const state = {
   datasets: {},
+  trainingMode: "pretraining",
   activeDatasetKey: "fineweb",
+  activeDatasetByMode: {
+    pretraining: "fineweb",
+    posttraining: "oasst",
+  },
   indexPool: [],
   isPaused: false,
   speed: 1,
   density: 3,
   showLabels: true,
   showInterface: true,
+  showDetails: false,
   spawnTimer: null,
   paletteIndex: 0,
   reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -34,6 +69,7 @@ const state = {
 const hud = document.querySelector(".hud");
 const footerNote = document.querySelector(".footer-note");
 const stream = document.querySelector("#stream");
+const datasetSwitch = document.querySelector("#dataset-switch");
 const datasetName = document.querySelector("#dataset-name");
 const datasetSummary = document.querySelector("#dataset-summary");
 const datasetLicense = document.querySelector("#dataset-license");
@@ -41,16 +77,25 @@ const datasetSize = document.querySelector("#dataset-size");
 const datasetSource = document.querySelector("#dataset-source");
 const datasetLabelNote = document.querySelector("#dataset-label-note");
 const footerText = document.querySelector("#footer-text");
+const phasePill = document.querySelector("#phase-pill");
+const texturePill = document.querySelector("#texture-pill");
+const samplePill = document.querySelector("#sample-pill");
+const phaseLabel = document.querySelector("#phase-label");
+const traceLabel = document.querySelector("#trace-label");
 const speedInput = document.querySelector("#speed");
 const densityInput = document.querySelector("#density");
 const labelsToggle = document.querySelector("#labels-toggle");
+const detailsToggleButton = document.querySelector("#details-toggle-button");
 const uiToggleButton = document.querySelector("#ui-toggle-button");
 const toggleButton = document.querySelector("#toggle");
 const shuffleButton = document.querySelector("#shuffle");
 const fullscreenButton = document.querySelector("#fullscreen-toggle");
 const dockUiToggle = document.querySelector("#dock-ui-toggle");
 const dockFullscreenToggle = document.querySelector("#dock-fullscreen-toggle");
-const datasetButtons = [...document.querySelectorAll(".dataset-toggle")];
+const modeButtons = [...document.querySelectorAll(".mode-toggle")];
+const aboutOpen = document.querySelector("#about-open");
+const aboutClose = document.querySelector("#about-close");
+const aboutModal = document.querySelector("#about-modal");
 
 async function init() {
   try {
@@ -68,8 +113,9 @@ async function init() {
     state.datasets = Object.fromEntries(entries);
     setupControls();
     applyLabelsVisibility();
+    setDetailsVisibility(state.showDetails);
     setInterfaceVisibility(state.showInterface);
-    activateDataset(state.activeDatasetKey);
+    switchTrainingMode(state.trainingMode, { force: true });
   } catch (error) {
     datasetName.textContent = "Dataset unavailable";
     datasetSummary.textContent = error.message;
@@ -79,6 +125,12 @@ async function init() {
 }
 
 function setupControls() {
+  modeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      switchTrainingMode(button.dataset.mode);
+    });
+  });
+
   speedInput.addEventListener("input", () => {
     state.speed = Number(speedInput.value);
   });
@@ -95,6 +147,10 @@ function setupControls() {
     if (state.reducedMotion) {
       renderStaticGallery();
     }
+  });
+
+  detailsToggleButton.addEventListener("click", () => {
+    setDetailsVisibility(!state.showDetails);
   });
 
   uiToggleButton.addEventListener("click", () => {
@@ -117,6 +173,7 @@ function setupControls() {
   shuffleButton.addEventListener("click", () => {
     const palettes = currentPalettes();
     state.paletteIndex = (state.paletteIndex + 1) % palettes.length;
+    document.body.style.setProperty("--palette-kick", String(Date.now()));
   });
 
   fullscreenButton.addEventListener("click", () => {
@@ -131,17 +188,18 @@ function setupControls() {
     void toggleFullscreenMode();
   });
 
-  datasetButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const nextKey = button.dataset.dataset;
-      if (nextKey === state.activeDatasetKey) {
-        return;
-      }
+  aboutOpen.addEventListener("click", () => {
+    openAboutModal();
+  });
 
-      state.activeDatasetKey = nextKey;
-      state.paletteIndex = 0;
-      activateDataset(nextKey);
-    });
+  aboutClose.addEventListener("click", () => {
+    closeAboutModal();
+  });
+
+  aboutModal.addEventListener("click", (event) => {
+    if (event.target === aboutModal) {
+      closeAboutModal();
+    }
   });
 
   document.addEventListener("fullscreenchange", handleFullscreenChange);
@@ -149,8 +207,74 @@ function setupControls() {
   syncFullscreenControls();
 }
 
+function switchTrainingMode(nextMode, options = {}) {
+  if (!STREAMS[nextMode]) {
+    return;
+  }
+
+  if (!options.force && nextMode === state.trainingMode) {
+    return;
+  }
+
+  state.trainingMode = nextMode;
+  state.activeDatasetKey =
+    state.activeDatasetByMode[nextMode] || STREAMS[nextMode].defaultDataset;
+  state.paletteIndex = 0;
+
+  document.body.dataset.mode = nextMode;
+  syncModeButtons();
+  renderDatasetButtons();
+  activateDataset(state.activeDatasetKey);
+}
+
+function renderDatasetButtons() {
+  const streamConfig = currentStreamConfig();
+  const buttons = streamConfig.datasetKeys
+    .map((key) => {
+      const dataset = state.datasets[key]?.dataset;
+      const label = dataset?.short_tag || key;
+      const active = key === state.activeDatasetKey;
+
+      return `
+        <button
+          class="dataset-toggle${active ? " is-active" : ""}"
+          data-dataset="${escapeHtml(key)}"
+          type="button"
+          aria-pressed="${String(active)}"
+        >
+          ${escapeHtml(label)}
+        </button>
+      `;
+    })
+    .join("");
+
+  datasetSwitch.innerHTML = buttons;
+
+  datasetSwitch.querySelectorAll(".dataset-toggle").forEach((button) => {
+    button.addEventListener("click", () => {
+      const nextKey = button.dataset.dataset;
+      if (nextKey === state.activeDatasetKey) {
+        return;
+      }
+
+      state.paletteIndex = 0;
+      activateDataset(nextKey);
+    });
+  });
+}
+
 function activateDataset(key) {
-  document.body.dataset.dataset = key;
+  const streamConfig = currentStreamConfig();
+  const nextKey = streamConfig.datasetKeys.includes(key)
+    ? key
+    : streamConfig.defaultDataset;
+
+  state.activeDatasetKey = nextKey;
+  state.activeDatasetByMode[state.trainingMode] = nextKey;
+  document.body.dataset.mode = state.trainingMode;
+  document.body.dataset.dataset = nextKey;
+
+  syncModeButtons();
   syncDatasetButtons();
   hydrateMeta(currentDataset().dataset);
   resetPool();
@@ -166,17 +290,33 @@ function activateDataset(key) {
 }
 
 function hydrateMeta(dataset) {
+  const samples = currentSamples();
+  const streamConfig = currentStreamConfig();
+
   datasetName.textContent = dataset.name;
   datasetSummary.textContent = dataset.rationale;
   datasetLicense.textContent = dataset.license;
-  datasetSize.textContent = `${currentDataset().samples.length} cached excerpts`;
+  datasetSize.textContent = `${samples.length} cached excerpts`;
   datasetSource.textContent = dataset.shortSource;
   datasetLabelNote.textContent = dataset.label_note;
   footerText.textContent = dataset.curator_note;
+  phasePill.textContent = dataset.phase || streamConfig.label;
+  texturePill.textContent = dataset.texture || streamConfig.texture;
+  samplePill.textContent = `${samples.length} excerpts`;
+  phaseLabel.textContent = streamConfig.label;
+  traceLabel.textContent = dataset.trace || streamConfig.trace;
+}
+
+function syncModeButtons() {
+  modeButtons.forEach((button) => {
+    const isActive = button.dataset.mode === state.trainingMode;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
 }
 
 function syncDatasetButtons() {
-  datasetButtons.forEach((button) => {
+  datasetSwitch.querySelectorAll(".dataset-toggle").forEach((button) => {
     const isActive = button.dataset.dataset === state.activeDatasetKey;
     button.classList.toggle("is-active", isActive);
     button.setAttribute("aria-pressed", String(isActive));
@@ -184,7 +324,16 @@ function syncDatasetButtons() {
 }
 
 function applyLabelsVisibility() {
+  document.body.classList.toggle("labels-visible", state.showLabels);
   document.body.classList.toggle("labels-hidden", !state.showLabels);
+}
+
+function setDetailsVisibility(nextExpanded) {
+  state.showDetails = nextExpanded;
+  document.body.classList.toggle("details-expanded", nextExpanded);
+  document.body.classList.toggle("details-collapsed", !nextExpanded);
+  detailsToggleButton.textContent = nextExpanded ? "Collapse Details" : "Expand Details";
+  detailsToggleButton.setAttribute("aria-pressed", String(nextExpanded));
 }
 
 function setInterfaceVisibility(nextVisible, options = {}) {
@@ -221,7 +370,10 @@ function syncInterfaceControls() {
 }
 
 function isFullscreenSupported() {
-  return document.fullscreenEnabled && typeof document.documentElement.requestFullscreen === "function";
+  return (
+    document.fullscreenEnabled &&
+    typeof document.documentElement.requestFullscreen === "function"
+  );
 }
 
 function isFullscreenActive() {
@@ -241,6 +393,7 @@ function syncFullscreenControls() {
 
   const nextLabel = active ? "Exit Fullscreen" : "Go Fullscreen";
   fullscreenButton.textContent = nextLabel;
+  dockFullscreenToggle.textContent = nextLabel;
   fullscreenButton.setAttribute("aria-pressed", String(active));
   dockFullscreenToggle.setAttribute("aria-pressed", String(active));
 }
@@ -303,6 +456,26 @@ function handleGlobalKeydown(event) {
   }
 }
 
+function openAboutModal() {
+  if (typeof aboutModal.showModal === "function") {
+    aboutModal.showModal();
+  } else {
+    aboutModal.setAttribute("open", "");
+  }
+}
+
+function closeAboutModal() {
+  if (typeof aboutModal.close === "function") {
+    aboutModal.close();
+  } else {
+    aboutModal.removeAttribute("open");
+  }
+}
+
+function currentStreamConfig() {
+  return STREAMS[state.trainingMode];
+}
+
 function currentDataset() {
   return state.datasets[state.activeDatasetKey];
 }
@@ -312,7 +485,7 @@ function currentSamples() {
 }
 
 function currentPalettes() {
-  return tintPalettes[state.activeDatasetKey];
+  return tintPalettes[state.activeDatasetKey] || tintPalettes.fineweb;
 }
 
 function resetPool() {
@@ -324,9 +497,9 @@ function clearStream() {
 }
 
 function primeStage() {
-  const starterCount = Math.min(Math.max(4, state.density + 1), currentSamples().length);
+  const starterCount = Math.min(Math.max(4, state.density + 2), currentSamples().length);
   for (let index = 0; index < starterCount; index += 1) {
-    spawnFragment();
+    spawnFragment({ immediate: true });
   }
 }
 
@@ -344,11 +517,11 @@ function scheduleSpawnLoop() {
 
     spawnFragment();
 
-    const delay = Math.max(650, 2100 - state.density * 260);
+    const delay = Math.max(740, 2300 - state.density * 280);
     state.spawnTimer = window.setTimeout(spawn, delay);
   };
 
-  state.spawnTimer = window.setTimeout(spawn, 950);
+  state.spawnTimer = window.setTimeout(spawn, 860);
 }
 
 function restartSpawnLoop() {
@@ -360,7 +533,7 @@ function restartSpawnLoop() {
   }
 }
 
-function spawnFragment() {
+function spawnFragment(options = {}) {
   if (!state.indexPool.length) {
     resetPool();
   }
@@ -371,19 +544,23 @@ function spawnFragment() {
   const palette = palettes[state.paletteIndex % palettes.length];
   const tint = palette[Math.floor(Math.random() * palette.length)];
   const fragment = document.createElement("article");
-  const width = randomBetween(270, 430);
-  const left = randomBetween(2, 74);
-  const driftX = `${randomBetween(-14, 14)}vw`;
-  const duration = `${(randomBetween(18, 34) / state.speed).toFixed(1)}s`;
-  const tilt = `${randomBetween(-5, 5)}deg`;
+  const width = randomBetween(300, 470);
+  const left = randomBetween(2, 72);
+  const driftX = `${randomBetween(-16, 16)}vw`;
+  const baseDuration = state.trainingMode === "posttraining" ? 27 : 24;
+  const duration = `${(randomBetween(baseDuration, baseDuration + 18) / state.speed).toFixed(1)}s`;
+  const tilt = `${randomBetween(-4, 4)}deg`;
+  const delay = options.immediate ? `${randomBetween(-18, -3)}s` : "0s";
 
   fragment.className = "fragment";
+  fragment.dataset.role = sample.role || state.trainingMode;
   fragment.style.left = `${left}vw`;
   fragment.style.width = `${Math.min(width, window.innerWidth - 28)}px`;
   fragment.style.setProperty("--drift-x", driftX);
   fragment.style.setProperty("--fragment-tint", tint);
   fragment.style.setProperty("--tilt", tilt);
   fragment.style.animationDuration = duration;
+  fragment.style.animationDelay = delay;
   fragment.innerHTML = buildFragmentMarkup(sample);
 
   fragment.addEventListener("animationend", () => {
@@ -393,17 +570,22 @@ function spawnFragment() {
   stream.appendChild(fragment);
 
   const fragments = stream.querySelectorAll(".fragment");
-  if (fragments.length > 22) {
+  if (fragments.length > 20) {
     fragments[0].remove();
   }
 }
 
 function buildFragmentMarkup(sample) {
+  const dataset = currentDataset().dataset;
+  const streamConfig = currentStreamConfig();
   const chips = [
-    currentDataset().dataset.short_tag,
+    streamConfig.shortLabel,
+    dataset.short_tag,
+    formatRole(sample.role),
     sample.domain,
     formatCategory(sample.category),
     sample.source_type,
+    sample.lang,
   ]
     .filter(Boolean)
     .map((value) => `<span class="fragment-chip">${escapeHtml(value)}</span>`)
@@ -413,6 +595,8 @@ function buildFragmentMarkup(sample) {
     formatLength(sample),
     sample.dump,
     sample.year,
+    formatReview(sample),
+    formatQuality(sample),
     sample.label_basis,
   ]
     .filter(Boolean)
@@ -420,10 +604,13 @@ function buildFragmentMarkup(sample) {
     .join("");
 
   return `
-    <div class="label-cluster">${chips}</div>
+    <div class="fragment-topline">
+      <div class="label-cluster">${chips}</div>
+      <span class="fragment-phase">${escapeHtml(dataset.phase || streamConfig.label)}</span>
+    </div>
     <p class="fragment-text">${escapeHtml(sample.excerpt)}</p>
     <div class="fragment-footer">${footerBits}</div>
-    <p class="fragment-source">${escapeHtml(sample.url)}</p>
+    <p class="fragment-source">${escapeHtml(sourceLabel(sample))}</p>
   `;
 }
 
@@ -437,6 +624,7 @@ function renderStaticGallery() {
     const tint = palette[index % palette.length];
 
     fragment.className = "fragment";
+    fragment.dataset.role = sample.role || state.trainingMode;
     fragment.style.setProperty("--fragment-tint", tint);
     fragment.style.setProperty("--tilt", "0deg");
     fragment.innerHTML = buildFragmentMarkup(sample);
@@ -462,6 +650,39 @@ function formatCategory(category) {
   }
 
   return category.replace("__label__", "").replaceAll("_", " ");
+}
+
+function formatRole(role) {
+  if (!role) {
+    return "";
+  }
+
+  return role === "prompter" ? "human prompt" : role;
+}
+
+function formatReview(sample) {
+  if (typeof sample.review_count !== "number") {
+    return "";
+  }
+
+  const result = sample.review_result === false ? "not exported" : "reviewed";
+  return `${sample.review_count} reviews / ${result}`;
+}
+
+function formatQuality(sample) {
+  if (typeof sample.quality_score !== "number") {
+    return "";
+  }
+
+  return `quality ${sample.quality_score.toFixed(2)}`;
+}
+
+function sourceLabel(sample) {
+  if (sample.url) {
+    return sample.url;
+  }
+
+  return currentDataset().dataset.source_url || currentDataset().dataset.name;
 }
 
 function shuffle(values) {

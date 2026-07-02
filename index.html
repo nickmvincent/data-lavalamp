@@ -6,53 +6,96 @@
     <title>Data Lava Lamp</title>
     <meta
       name="description"
-      content="An ambient lava lamp made from cached fragments of an open web-scale dataset."
+      content="A fast, readable lava lamp for sensing what pre-training and post-training data feel like."
     />
-    <link rel="stylesheet" href="./styles.css" />
-    <script defer src="./app.js"></script>
+    <link rel="stylesheet" href="./styles.css?v=7" />
+    <script defer src="./app.js?v=7"></script>
   </head>
-  <body data-dataset="fineweb" class="labels-visible">
+  <body data-mode="pretraining" data-dataset="fineweb" class="details-collapsed">
     <div class="page-shell">
-      <div class="ambient ambient-a"></div>
-      <div class="ambient ambient-b"></div>
-      <div class="ambient ambient-c"></div>
+      <div class="fx-grid" aria-hidden="true"></div>
+      <div class="ambient ambient-a" aria-hidden="true"></div>
+      <div class="ambient ambient-b" aria-hidden="true"></div>
+      <div class="ambient ambient-c" aria-hidden="true"></div>
       <div class="grain" aria-hidden="true"></div>
 
       <header class="hud">
-        <section class="panel title-panel">
-          <p class="eyebrow">Cached open-data fragments, staged as ambient motion</p>
+        <section class="panel title-panel" aria-label="Data Lava Lamp overview">
+          <div class="title-topline">
+            <p class="eyebrow">Training data as a readable ambient stream</p>
+          </div>
+
+          <div class="mode-switch" role="radiogroup" aria-label="training stage">
+            <button
+              class="mode-toggle is-active"
+              data-mode="pretraining"
+              type="button"
+              aria-pressed="true"
+            >
+              Pre-training
+            </button>
+            <button
+              class="mode-toggle"
+              data-mode="posttraining"
+              type="button"
+              aria-pressed="false"
+            >
+              Post-training
+            </button>
+          </div>
+
           <h1>Data Lava Lamp</h1>
           <p class="lede">
-            A polished drift of open web-scale text: switch between FineWeb and
-            Dolma, let the cards rise like lanterns, and reveal labels whenever
-            you want the metadata to come back into focus.
+            A cyberpunk-ish drift of tokens, domains, labels, and human-feedback
+            traces. Leave it running for a few minutes and the weird texture of
+            model training data starts to come into focus.
           </p>
-          <div class="hero-pills">
-            <span class="pill">FineWeb Edu</span>
-            <span class="pill">Dolma 3 Mix</span>
-            <span class="pill">Optional labels</span>
+
+          <div class="hero-pills" aria-label="current stream highlights">
+            <span id="phase-pill" class="pill">Pre-training</span>
+            <span id="texture-pill" class="pill">web-scale text</span>
+            <span id="sample-pill" class="pill">cached excerpts</span>
+          </div>
+
+          <div class="title-actions">
+            <button
+              id="details-toggle-button"
+              class="text-button primary-button"
+              type="button"
+              aria-pressed="false"
+            >
+              Expand Details
+            </button>
+            <button id="ui-toggle-button" class="text-button" type="button">
+              Hide Interface
+            </button>
           </div>
         </section>
 
         <div class="hud-grid">
           <section class="panel panel-controls" aria-label="installation controls">
-            <p class="panel-label">Dataset</p>
-            <div class="dataset-switch" role="radiogroup" aria-label="dataset picker">
-              <button
-                class="dataset-toggle is-active"
-                data-dataset="fineweb"
-                type="button"
-              >
-                FineWeb Edu
-              </button>
-              <button class="dataset-toggle" data-dataset="dolma" type="button">
-                Dolma 3 Mix
-              </button>
+            <p class="panel-label">Dataset channel</p>
+            <div
+              id="dataset-switch"
+              class="dataset-switch"
+              role="radiogroup"
+              aria-label="dataset picker"
+            ></div>
+
+            <div class="signal-card" aria-label="active stream profile">
+              <div>
+                <span>Stage</span>
+                <strong id="phase-label">Pre-training</strong>
+              </div>
+              <div>
+                <span>Trace</span>
+                <strong id="trace-label">domains + tokens</strong>
+              </div>
             </div>
 
             <p class="panel-label panel-label-spaced">Display</p>
             <label class="toggle-row" for="labels-toggle">
-              <span>Show labels</span>
+              <span>Show trace labels</span>
               <span class="switch">
                 <input id="labels-toggle" type="checkbox" checked />
                 <span class="switch-track"></span>
@@ -75,27 +118,38 @@
               <input id="density" type="range" min="1" max="5" step="1" value="3" />
             </div>
             <div class="button-row">
-              <button id="ui-toggle-button" type="button">Hide Interface</button>
-              <button id="toggle" type="button">Pause</button>
-              <button id="shuffle" type="button">Shuffle Palette</button>
-              <button id="fullscreen-toggle" type="button">Go Fullscreen</button>
+              <button id="toggle" class="text-button" type="button">Pause</button>
+              <button id="shuffle" class="text-button" type="button">
+                Shuffle Palette
+              </button>
+              <button id="about-open" class="text-button" type="button">
+                About
+              </button>
+              <button id="fullscreen-toggle" class="text-button" type="button">
+                Go Fullscreen
+              </button>
             </div>
           </section>
 
-          <section class="panel panel-meta">
+          <section class="panel panel-meta" aria-label="current stream metadata">
             <p class="panel-label">Current stream</p>
             <h2 id="dataset-name">Loading...</h2>
-            <p id="dataset-summary" class="panel-copy">
-              Pulling cached metadata.
-            </p>
-            <div class="meta-pills">
-              <span id="dataset-license" class="pill">...</span>
-              <span id="dataset-size" class="pill">...</span>
-              <span id="dataset-source" class="pill">...</span>
+            <p id="dataset-summary" class="panel-copy">Pulling cached metadata.</p>
+            <div class="stream-stats">
+              <div>
+                <span>Cache</span>
+                <strong id="dataset-size">...</strong>
+              </div>
+              <div>
+                <span>Source</span>
+                <strong id="dataset-source">...</strong>
+              </div>
+              <div>
+                <span>License</span>
+                <strong id="dataset-license">...</strong>
+              </div>
             </div>
-            <p id="dataset-label-note" class="label-note">
-              Loading label notes.
-            </p>
+            <p id="dataset-label-note" class="label-note">Loading label notes.</p>
           </section>
         </div>
       </header>
@@ -121,10 +175,66 @@
       </main>
 
       <footer class="footer-note">
-        <p id="footer-text">
-          Loading cached sample excerpts from the selected dataset.
-        </p>
+        <p id="footer-text">Loading cached sample excerpts.</p>
       </footer>
+
+      <dialog id="about-modal" class="about-modal" aria-labelledby="about-title">
+        <div class="modal-shell">
+          <div class="modal-header">
+            <p class="eyebrow">Explainer layer</p>
+            <button id="about-close" class="text-button subtle-button" type="button">
+              Close
+            </button>
+          </div>
+          <h2 id="about-title">What This Shows</h2>
+          <p>
+            Pre-training streams are raw-ish text a model might learn broad
+            patterns from: web pages, educational pages, PDFs, code, and other
+            large corpora. Post-training streams are more intentional: prompts,
+            assistant replies, ratings, preference labels, and other human
+            feedback used to shape behavior after the base model exists.
+          </p>
+
+          <div class="about-grid">
+            <section>
+              <h3>Dataset Cards</h3>
+              <a href="https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu" target="_blank" rel="noreferrer">
+                FineWeb-Edu
+              </a>
+              <a href="https://huggingface.co/datasets/allenai/dolma3_mix-150B-1025" target="_blank" rel="noreferrer">
+                Dolma 3 Mix
+              </a>
+              <a href="https://huggingface.co/datasets/OpenAssistant/oasst1" target="_blank" rel="noreferrer">
+                OpenAssistant/oasst1
+              </a>
+            </section>
+
+            <section>
+              <h3>Background Reading</h3>
+              <a href="https://arxiv.org/abs/2406.17557" target="_blank" rel="noreferrer">
+                The FineWeb Datasets
+              </a>
+              <a href="https://arxiv.org/abs/2304.07327" target="_blank" rel="noreferrer">
+                OpenAssistant Conversations
+              </a>
+              <a href="https://arxiv.org/abs/1803.09010" target="_blank" rel="noreferrer">
+                Datasheets for Datasets
+              </a>
+              <a href="https://arxiv.org/abs/2101.00027" target="_blank" rel="noreferrer">
+                The Pile
+              </a>
+              <a href="https://dl.acm.org/doi/10.1145/3442188.3445922" target="_blank" rel="noreferrer">
+                On the Dangers of Stochastic Parrots
+              </a>
+            </section>
+          </div>
+
+          <p class="modal-note">
+            This prototype uses tiny cached excerpts so it stays fast and stable.
+            The structure is ready for live Hugging Face streams later.
+          </p>
+        </div>
+      </dialog>
     </div>
   </body>
 </html>
