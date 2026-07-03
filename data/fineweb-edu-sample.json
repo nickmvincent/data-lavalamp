@@ -5,9 +5,9 @@
     "short_tag": "FineWeb",
     "shortSource": "Hugging Face",
     "source_url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu",
-    "rationale": "Chosen for the softer side of the installation because it is openly licensed, public, and yields cleaner readable educational web fragments than the current default Dolma 3 preview.",
-    "label_note": "Labels here blend dataset metadata with a few lightweight curator tags so the stream stays readable without pretending the dataset shipped those exact categories.",
-    "curator_note": "FineWeb-Edu is the gentler channel in the room: public, legible, educational, and still recognizably web-native."
+    "rationale": "A gentler pre-training stream: educational web pages, guides, abstracts, and public-interest text with enough messiness to still feel like the web.",
+    "label_note": "FineWeb-Edu is loaded here from a small local JSON sample. Visible labels mix dataset fields such as domain and year with light editorial tags for category and source type.",
+    "curator_note": "FineWeb-Edu: readable public web text with the web's odd texture still showing."
   },
   "samples": [
     {

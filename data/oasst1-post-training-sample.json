@@ -9,8 +9,8 @@
     "phase": "Post-training",
     "texture": "human feedback conversations",
     "trace": "roles + ratings",
-    "rationale": "A compact post-training stream built from a public human-generated and human-annotated assistant conversation dataset. It makes the contrast clear: this looks less like scraped web pages and more like prompts, replies, rankings, and behavior-shaping feedback.",
-    "label_note": "Labels emphasize role, language, review counts, quality estimates, and whether the message passed review. They are meant to make the human-feedback layer visible without overwhelming the text.",
+    "rationale": "A post-training stream of prompts, replies, and review signals. It shows how assistant behavior is shaped after broad pre-training.",
+    "label_note": "OpenAssistant OASST1 is a public human-generated, human-annotated conversation dataset. Visible labels emphasize role, language, review count, and quality-style scores.",
     "curator_note": "Post-training data feels staged: people ask for explanations, assistants answer, reviewers score, and the model is nudged toward a particular conversational shape."
   },
   "samples": [

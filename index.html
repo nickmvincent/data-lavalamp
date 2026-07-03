@@ -8,8 +8,8 @@
       name="description"
       content="A fast, readable lava lamp for sensing what pre-training and post-training data feel like."
     />
-    <link rel="stylesheet" href="./styles.css?v=7" />
-    <script defer src="./app.js?v=7"></script>
+    <link rel="stylesheet" href="./styles.css?v=8" />
+    <script defer src="./app.js?v=8"></script>
   </head>
   <body data-mode="pretraining" data-dataset="fineweb" class="details-collapsed">
     <div class="page-shell">
@@ -46,15 +46,15 @@
 
           <h1>Data Lava Lamp</h1>
           <p class="lede">
-            A cyberpunk-ish drift of tokens, domains, labels, and human-feedback
-            traces. Leave it running for a few minutes and the weird texture of
+            A neon drift of tokens, domains, source hints, and human-feedback
+            signals. Leave it running for a few minutes and the weird texture of
             model training data starts to come into focus.
           </p>
 
           <div class="hero-pills" aria-label="current stream highlights">
             <span id="phase-pill" class="pill">Pre-training</span>
             <span id="texture-pill" class="pill">web-scale text</span>
-            <span id="sample-pill" class="pill">cached excerpts</span>
+            <span id="sample-pill" class="pill">floating excerpts</span>
           </div>
 
           <div class="title-actions">
@@ -73,8 +73,8 @@
         </section>
 
         <div class="hud-grid">
-          <section class="panel panel-controls" aria-label="installation controls">
-            <p class="panel-label">Dataset channel</p>
+          <section class="panel panel-controls" aria-label="stream controls">
+            <p class="panel-label">Stream</p>
             <div
               id="dataset-switch"
               class="dataset-switch"
@@ -95,7 +95,7 @@
 
             <p class="panel-label panel-label-spaced">Display</p>
             <label class="toggle-row" for="labels-toggle">
-              <span>Show trace labels</span>
+              <span>Show context labels</span>
               <span class="switch">
                 <input id="labels-toggle" type="checkbox" checked />
                 <span class="switch-track"></span>
@@ -132,12 +132,12 @@
           </section>
 
           <section class="panel panel-meta" aria-label="current stream metadata">
-            <p class="panel-label">Current stream</p>
+            <p class="panel-label">Now flowing</p>
             <h2 id="dataset-name">Loading...</h2>
-            <p id="dataset-summary" class="panel-copy">Pulling cached metadata.</p>
+            <p id="dataset-summary" class="panel-copy">Loading stream context.</p>
             <div class="stream-stats">
               <div>
-                <span>Cache</span>
+                <span>Samples</span>
                 <strong id="dataset-size">...</strong>
               </div>
               <div>
@@ -149,7 +149,15 @@
                 <strong id="dataset-license">...</strong>
               </div>
             </div>
-            <p id="dataset-label-note" class="label-note">Loading label notes.</p>
+            <details class="technical-details stream-technical-details">
+              <summary>Technical Details</summary>
+              <p id="dataset-label-note" class="label-note">
+                Loading label details.
+              </p>
+              <p id="dataset-cache-note" class="label-note">
+                Loading sample details.
+              </p>
+            </details>
           </section>
         </div>
       </header>
@@ -175,24 +183,23 @@
       </main>
 
       <footer class="footer-note">
-        <p id="footer-text">Loading cached sample excerpts.</p>
+        <p id="footer-text">Loading the stream.</p>
       </footer>
 
       <dialog id="about-modal" class="about-modal" aria-labelledby="about-title">
         <div class="modal-shell">
           <div class="modal-header">
-            <p class="eyebrow">Explainer layer</p>
+            <p class="eyebrow">About this piece</p>
             <button id="about-close" class="text-button subtle-button" type="button">
               Close
             </button>
           </div>
           <h2 id="about-title">What This Shows</h2>
           <p>
-            Pre-training streams are raw-ish text a model might learn broad
-            patterns from: web pages, educational pages, PDFs, code, and other
-            large corpora. Post-training streams are more intentional: prompts,
-            assistant replies, ratings, preference labels, and other human
-            feedback used to shape behavior after the base model exists.
+            Pre-training data is the broad text soup a model studies before it
+            knows how to act like an assistant. Post-training data is more
+            deliberate: prompts, replies, ratings, and preference signals that
+            shape how the assistant responds.
           </p>
 
           <div class="about-grid">
@@ -229,10 +236,20 @@
             </section>
           </div>
 
-          <p class="modal-note">
-            This prototype uses tiny cached excerpts so it stays fast and stable.
-            The structure is ready for live Hugging Face streams later.
-          </p>
+          <details class="technical-details modal-technical-details">
+            <summary>Technical Details</summary>
+            <p>
+              This static version uses small local JSON samples so the page
+              loads quickly and keeps working without an API server. A later
+              version can keep this as the fallback while a Pages Function or
+              Worker streams random rows from hosted datasets.
+            </p>
+            <p>
+              Visible labels mix original dataset fields, such as domain, year,
+              role, and review counts, with a few light editorial tags that make
+              the fragments easier to scan.
+            </p>
+          </details>
         </div>
       </dialog>
     </div>

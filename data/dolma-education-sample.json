@@ -5,9 +5,9 @@
     "short_tag": "Dolma",
     "shortSource": "Allen AI / Hugging Face",
     "source_url": "https://huggingface.co/datasets/allenai/dolma3_mix-150B-1025",
-    "rationale": "Chosen as the rougher alternate channel because it is a real public Dolma 3 sample. These cached excerpts come from a downloaded `education_and_jobs` shard so the site can offer a Dolma option without relying on the noisier adult-heavy default preview.",
-    "label_note": "These labels come mostly from Dolma metadata: the main category is `weborganizer_max`, while source-type tags are lightweight curator summaries of the page itself.",
-    "curator_note": "Dolma 3 Mix gives the installation a rawer pretraining-corpus texture. This cache is pulled from a small safe shard rather than the default first-row preview."
+    "rationale": "A rawer pre-training stream drawn from pages about school, work, services, and institutions. It feels closer to the rough edges of a broad web crawl.",
+    "label_note": "This Dolma sample comes from an education-and-jobs slice. The broad category comes from Dolma metadata; source-type labels are light editorial summaries for readability.",
+    "curator_note": "Dolma: a rougher crawl-like channel, full of institutional pages, job posts, FAQs, and odd web leftovers."
   },
   "samples": [
     {

@@ -76,6 +76,7 @@ const datasetLicense = document.querySelector("#dataset-license");
 const datasetSize = document.querySelector("#dataset-size");
 const datasetSource = document.querySelector("#dataset-source");
 const datasetLabelNote = document.querySelector("#dataset-label-note");
+const datasetCacheNote = document.querySelector("#dataset-cache-note");
 const footerText = document.querySelector("#footer-text");
 const phasePill = document.querySelector("#phase-pill");
 const texturePill = document.querySelector("#texture-pill");
@@ -103,7 +104,7 @@ async function init() {
       Object.entries(DATASET_FILES).map(async ([key, file]) => {
         const response = await fetch(file);
         if (!response.ok) {
-          throw new Error(`Could not load ${key} cached sample.`);
+          throw new Error(`Could not load the ${key} stream.`);
         }
 
         return [key, await response.json()];
@@ -119,8 +120,10 @@ async function init() {
   } catch (error) {
     datasetName.textContent = "Dataset unavailable";
     datasetSummary.textContent = error.message;
+    datasetLabelNote.textContent = "The local sample file could not be loaded.";
+    datasetCacheNote.textContent = "Check the JSON paths and rebuild the static bundle.";
     footerText.textContent =
-      "One or more cached dataset files could not be loaded. Check the JSON paths and try again.";
+      "One or more streams could not be loaded. Check the sample files and try again.";
   }
 }
 
@@ -296,9 +299,10 @@ function hydrateMeta(dataset) {
   datasetName.textContent = dataset.name;
   datasetSummary.textContent = dataset.rationale;
   datasetLicense.textContent = dataset.license;
-  datasetSize.textContent = `${samples.length} cached excerpts`;
+  datasetSize.textContent = `${samples.length} excerpts`;
   datasetSource.textContent = dataset.shortSource;
   datasetLabelNote.textContent = dataset.label_note;
+  datasetCacheNote.textContent = `${dataset.short_tag || dataset.name} is represented here by ${samples.length} local excerpts from ${dataset.source_url || dataset.name}.`;
   footerText.textContent = dataset.curator_note;
   phasePill.textContent = dataset.phase || streamConfig.label;
   texturePill.textContent = dataset.texture || streamConfig.texture;
@@ -593,11 +597,9 @@ function buildFragmentMarkup(sample) {
 
   const footerBits = [
     formatLength(sample),
-    sample.dump,
     sample.year,
     formatReview(sample),
     formatQuality(sample),
-    sample.label_basis,
   ]
     .filter(Boolean)
     .map((value) => `<span>${escapeHtml(value)}</span>`)
@@ -665,8 +667,7 @@ function formatReview(sample) {
     return "";
   }
 
-  const result = sample.review_result === false ? "not exported" : "reviewed";
-  return `${sample.review_count} reviews / ${result}`;
+  return `${sample.review_count} reviews`;
 }
 
 function formatQuality(sample) {
@@ -674,7 +675,7 @@ function formatQuality(sample) {
     return "";
   }
 
-  return `quality ${sample.quality_score.toFixed(2)}`;
+  return `score ${sample.quality_score.toFixed(2)}`;
 }
 
 function sourceLabel(sample) {

@@ -169,6 +169,7 @@ a:focus-visible {
   inset: 0;
   z-index: 3;
   display: grid;
+  grid-auto-rows: max-content;
   align-content: center;
   gap: 0.65rem;
   width: 100%;
@@ -204,6 +205,7 @@ a:focus-visible {
 
 .title-panel {
   width: min(48rem, calc(100vw - 2rem));
+  align-self: start;
   justify-self: center;
 }
 
@@ -220,6 +222,11 @@ a:focus-visible {
   flex-wrap: wrap;
   gap: 0.55rem;
   margin-top: 0.85rem;
+  width: 100%;
+}
+
+.title-actions .text-button {
+  flex: 1 1 10.5rem;
 }
 
 .eyebrow,
@@ -288,6 +295,7 @@ h1 {
   min-height: 2.34rem;
   padding: 0.5rem 0.72rem;
   cursor: pointer;
+  white-space: nowrap;
   transition:
     transform 160ms ease,
     background 160ms ease,
@@ -374,7 +382,7 @@ body.details-collapsed .hud {
 }
 
 body.details-collapsed .title-panel {
-  width: min(30rem, calc(100vw - 2rem));
+  width: min(34rem, calc(100vw - 2rem));
   padding: 0.95rem;
   text-align: center;
 }
@@ -401,6 +409,8 @@ body.details-collapsed .lede {
 }
 
 body.details-collapsed .title-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   justify-content: center;
 }
 
@@ -552,9 +562,36 @@ body.details-expanded .hud-grid {
 }
 
 .label-note {
-  margin: 0.85rem 0 0;
+  margin: 0.55rem 0 0;
   color: rgba(248, 251, 255, 0.66);
   line-height: 1.5;
+}
+
+.technical-details {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.technical-details summary {
+  color: var(--accent);
+  cursor: pointer;
+  font-family: "SFMono-Regular", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+}
+
+.technical-details summary:hover,
+.technical-details summary:focus-visible {
+  color: var(--accent-3);
+}
+
+.technical-details[open] summary {
+  margin-bottom: 0.4rem;
+}
+
+.technical-details p {
+  margin: 0.45rem 0 0;
 }
 
 .stream-stats {
@@ -799,15 +836,18 @@ body.ui-hidden .footer-note {
 }
 
 .stage-dock {
-  position: absolute;
+  position: fixed;
   top: 1rem;
-  right: 1rem;
+  right: auto;
+  left: 50%;
   z-index: 4;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.55rem;
+  max-width: calc(100vw - 2rem);
   opacity: 0;
-  transform: translate3d(0, -0.75rem, 0);
+  transform: translate3d(-50%, -0.75rem, 0);
   pointer-events: none;
   transition:
     opacity 180ms ease,
@@ -816,11 +856,12 @@ body.ui-hidden .footer-note {
 
 body.ui-hidden .stage-dock {
   opacity: 1;
-  transform: translate3d(0, 0, 0);
+  transform: translate3d(-50%, 0, 0);
   pointer-events: auto;
 }
 
 .dock-button {
+  min-width: 10rem;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03)),
     rgba(7, 14, 24, 0.75);
@@ -964,10 +1005,21 @@ body.paused .ring {
   .stage-dock {
     top: auto;
     right: 1rem;
-    bottom: 1rem;
+    bottom: max(1rem, env(safe-area-inset-bottom));
     left: 1rem;
-    justify-content: flex-end;
+    max-width: none;
+    justify-content: center;
     flex-wrap: wrap;
+    transform: translate3d(0, 0.75rem, 0);
+  }
+
+  body.ui-hidden .stage-dock {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .dock-button {
+    flex: 1 1 12rem;
+    max-width: 18rem;
   }
 
   .footer-note {
@@ -996,6 +1048,10 @@ body.paused .ring {
 
   body.details-collapsed h1 {
     font-size: 2.55rem;
+  }
+
+  body.details-collapsed .title-actions {
+    gap: 0.45rem;
   }
 
   .mode-switch,
