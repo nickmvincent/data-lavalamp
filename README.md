@@ -24,6 +24,7 @@ All streams are cached locally so the piece stays fast and stable.
 - post-training labels for role, review count, and quality-style metadata
 - speed and density controls
 - palette shuffling
+- neon and terminal/hacker-lamp visual views
 - explainer modal with dataset cards and background readings
 - hideable interface plus browser fullscreen presentation mode
 - reduced-motion fallback

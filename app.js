@@ -45,9 +45,28 @@ const tintPalettes = {
   ],
 };
 
+const terminalTintPalettes = {
+  fineweb: [
+    ["#67ff7a", "#d7ff77", "#ffb000", "#7df9ff"],
+    ["#44ff99", "#b9ff66", "#ffd166", "#f6f7a6"],
+    ["#9cff6a", "#31ff6f", "#ffdd57", "#b7fff0"],
+  ],
+  dolma: [
+    ["#7cff7c", "#ffb000", "#00e5ff", "#faff8a"],
+    ["#39ff14", "#ffa600", "#ff5f57", "#9ef01a"],
+    ["#a7ff83", "#f7c948", "#66ffe3", "#ff7a3d"],
+  ],
+  oasst: [
+    ["#39ff14", "#ffb000", "#00d9ff", "#ff5f57"],
+    ["#8cff66", "#ffd166", "#7df9ff", "#ff9f1c"],
+    ["#aaff00", "#50fa7b", "#f1fa8c", "#ff6b6b"],
+  ],
+};
+
 const state = {
   datasets: {},
   trainingMode: "pretraining",
+  visualView: "neon",
   activeDatasetKey: "fineweb",
   activeDatasetByMode: {
     pretraining: "fineweb",
@@ -94,6 +113,7 @@ const fullscreenButton = document.querySelector("#fullscreen-toggle");
 const dockUiToggle = document.querySelector("#dock-ui-toggle");
 const dockFullscreenToggle = document.querySelector("#dock-fullscreen-toggle");
 const modeButtons = [...document.querySelectorAll(".mode-toggle")];
+const viewButtons = [...document.querySelectorAll(".view-toggle")];
 const aboutOpen = document.querySelector("#about-open");
 const aboutClose = document.querySelector("#about-close");
 const aboutModal = document.querySelector("#about-modal");
@@ -113,6 +133,7 @@ async function init() {
 
     state.datasets = Object.fromEntries(entries);
     setupControls();
+    setVisualView(state.visualView, { force: true, skipRestart: true });
     applyLabelsVisibility();
     setDetailsVisibility(state.showDetails);
     setInterfaceVisibility(state.showInterface);
@@ -131,6 +152,12 @@ function setupControls() {
   modeButtons.forEach((button) => {
     button.addEventListener("click", () => {
       switchTrainingMode(button.dataset.mode);
+    });
+  });
+
+  viewButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      setVisualView(button.dataset.view);
     });
   });
 
@@ -332,6 +359,38 @@ function applyLabelsVisibility() {
   document.body.classList.toggle("labels-hidden", !state.showLabels);
 }
 
+function setVisualView(nextView, options = {}) {
+  if (!["neon", "terminal"].includes(nextView)) {
+    return;
+  }
+
+  if (!options.force && nextView === state.visualView) {
+    return;
+  }
+
+  state.visualView = nextView;
+  state.paletteIndex = 0;
+  document.body.dataset.view = nextView;
+
+  viewButtons.forEach((button) => {
+    const isActive = button.dataset.view === nextView;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
+
+  if (!options.skipRestart && Object.keys(state.datasets).length > 0) {
+    clearStream();
+    resetPool();
+
+    if (state.reducedMotion) {
+      renderStaticGallery();
+    } else {
+      primeStage();
+      restartSpawnLoop();
+    }
+  }
+}
+
 function setDetailsVisibility(nextExpanded) {
   state.showDetails = nextExpanded;
   document.body.classList.toggle("details-expanded", nextExpanded);
@@ -489,7 +548,9 @@ function currentSamples() {
 }
 
 function currentPalettes() {
-  return tintPalettes[state.activeDatasetKey] || tintPalettes.fineweb;
+  const paletteSet =
+    state.visualView === "terminal" ? terminalTintPalettes : tintPalettes;
+  return paletteSet[state.activeDatasetKey] || paletteSet.fineweb;
 }
 
 function resetPool() {

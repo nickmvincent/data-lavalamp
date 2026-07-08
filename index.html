@@ -8,10 +8,15 @@
       name="description"
       content="A fast, readable lava lamp for sensing what pre-training and post-training data feel like."
     />
-    <link rel="stylesheet" href="./styles.css?v=8" />
-    <script defer src="./app.js?v=8"></script>
+    <link rel="stylesheet" href="./styles.css?v=9" />
+    <script defer src="./app.js?v=9"></script>
   </head>
-  <body data-mode="pretraining" data-dataset="fineweb" class="details-collapsed">
+  <body
+    data-mode="pretraining"
+    data-dataset="fineweb"
+    data-view="neon"
+    class="details-collapsed"
+  >
     <div class="page-shell">
       <div class="fx-grid" aria-hidden="true"></div>
       <div class="ambient ambient-a" aria-hidden="true"></div>
@@ -91,6 +96,26 @@
                 <span>Trace</span>
                 <strong id="trace-label">domains + tokens</strong>
               </div>
+            </div>
+
+            <p class="panel-label panel-label-spaced">View</p>
+            <div class="view-switch" role="radiogroup" aria-label="visual style">
+              <button
+                class="view-toggle is-active"
+                data-view="neon"
+                type="button"
+                aria-pressed="true"
+              >
+                Neon
+              </button>
+              <button
+                class="view-toggle"
+                data-view="terminal"
+                type="button"
+                aria-pressed="false"
+              >
+                Terminal
+              </button>
             </div>
 
             <p class="panel-label panel-label-spaced">Display</p>
